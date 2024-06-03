@@ -1,0 +1,169 @@
+
+
+
+function [det, info] = detect_swa(gray, edgemap, dirmap, para, model)
+
+resol     = para.resol;
+Ss        = para.Ss;
+nms       = para.nms;
+t1        = para.t1;
+t2        = para.t2;
+miss_rate = para.miss_rate;
+
+sz         = size(edgemap);
+row_sample = 1:resol:sz(1);
+col_sample = 1:resol:sz(2);
+score_map  = zeros( length(row_sample), length(col_sample) );
+cnt_map    = cell( length(row_sample), length(col_sample) );
+score2_map = cell( length(row_sample), length(col_sample) );
+
+% for speed
+cnt_d   = model.cnt_d;
+cnt_sd  = model.cnt_sd;
+
+cnt_dir = model.cnt_dir;
+cnt_con = model.cnt_con;
+cnt_std = model.cnt_std;
+
+ray_dir = model.ray_dir;
+ray_con = model.ray_con;
+ray_std = model.ray_std;
+lutab   = model.lutab;
+
+n_exist = round( length(cnt_d)*(1-miss_rate) );
+
+R = max(Ss);
+edind = find(edgemap(:) > 0);
+[edr, edc] = ind2sub( sz, edind );
+dirs = dirmap( edind );
+
+cnts0  = cell(1, length(Ss));
+for i = 1:length(Ss)
+    cnts0{i} = zeros( length(cnt_d), 2 );
+end
+
+scpros = nn_classifier_sc( edgemap, model, para.knn, para.sc_sigma);
+ttpros = nn_classifier( gray, edgemap, model, para.knn, para.tt_sigma );
+
+
+p_local = cell(1, length(cnt_dir));
+for k = 1:length(cnt_dir)
+    % ori_pro = circ_vmpdf( dirs*2, cnt_dir(k), cnt_con(k) );     
+    ori_dis = circ_dist_( dirs*2, cnt_dir(k) );
+    ori_pro = exp( -5 * ori_dis/pi );
+    p_local{k} =  scpros{k}' .* ttpros{k}' .* ori_pro;
+end
+    
+
+for i = 1:length(row_sample)
+    for j = 1:length(col_sample)
+        
+        rc = row_sample(i);
+        cc = col_sample(j);
+        
+        inind = find( edr>(rc-R) & edr<(rc+R) & edc>(cc-R) & edc<(cc+R) );
+        if sum(inind) == 0
+            continue;
+        end
+        
+        r_in = edr(inind);
+        c_in = edc(inind);
+        
+        off = [ r_in-rc, c_in-cc ];
+        dis = sqrt( off(:,1).^2 + off(:,2).^2 );
+        theta = atan2( off(:,1), ( off(:,2)+eps ) );        % angle of ray
+        itheta = round(theta*180/pi);
+        itheta( itheta<=0 ) = itheta( itheta<=0 ) + 360;
+        
+		pool  = cell( length(cnt_d), length(Ss) );		
+        hists = zeros( length(cnt_d), length(Ss) );
+        cnts  = cnts0;
+		
+        
+        miss_on_scale = zeros(1, length(Ss) );
+        for k = 1:length(cnt_d)
+            % p1 = lutab( k,  itheta);        
+            
+            d1 = circ_dist_( ray_dir(k), theta );
+            p1 = d1 < (ray_std(k)*2);
+            
+            p2 = p_local{k}( inind );
+            p12 = p1 .* p2;
+            
+            can_ind = find( p12 > t1 );
+            if isempty(can_ind)
+                continue;
+            end
+            p12 = p12(can_ind);
+            can_dis = dis(can_ind);
+            
+            for m = 1:length(Ss)   % for differents scales
+                if miss_on_scale(m) < miss_rate
+                    % p3 = normpdf_( dis(can_ind)/Ss(m), cnt_d(k), cnt_sd(k));   
+                    d3 = abs( can_dis/Ss(m) - cnt_d(k) );
+                    p3 = d3 < (cnt_sd(k)*2);
+
+                    p123 =  p12.* p3;
+					
+					bigi = find( p123 > t2 );
+                    if ~isempty(bigi)
+                        bigp = p123( bigi );
+                        [help_max_p, help_max_i] = max( bigp );                        
+                        hists(k, m) = help_max_p;                        
+                        pool{k, m}  = [ r_in(can_ind(bigi)), c_in(can_ind(bigi)), bigp ];
+						cnts{m}(k, :) = [ r_in(can_ind(help_max_i)), c_in(can_ind(help_max_i)) ];
+                    else
+                        miss_on_scale(m) = miss_on_scale(m) + 1/length(cnt_d);
+                    end
+					
+                end
+            end
+        end
+        
+        scale_pro = zeros(1, length(Ss));
+        scale_pro(:) = -inf;
+        
+        for i_s = 1:size(hists,2)
+            help_hist = hists(:,i_s);
+            if length(find(help_hist==0))/length(cnt_d) <= miss_rate
+                [help_hist2, nc] = sort( help_hist, 'descend' );
+				scale_pro(i_s) =  exp( mean( log(help_hist2(1:n_exist)) ) );
+            end
+        end
+        
+        % estimate the scale factor
+        [maxp, maxi] = max(scale_pro);      
+        
+        cnt_map{i,j} = cnts{maxi};
+		score_map(i,j) = maxp;
+        scale_map(i,j) = maxi;
+        hists_map{i,j} = hists;
+        pools_map{i,j} = pool;
+        
+    end
+end
+
+if max(score_map(:)) == 0
+    det = [];
+    info = [];
+    return;
+end
+
+[lmr, lmc] = nonmaxsuppts(score_map, nms, max(score_map(:))*0.1 );  
+det(length(lmr)) = struct('contour', [], 'score', [], 'center', []);
+
+for i = 1:length(lmr)
+    det(i).contour = cnt_map{ lmr(i), lmc(i) };
+    det(i).score = score_map( lmr(i), lmc(i) );
+    det(i).center = [ row_sample(lmr(i)), col_sample(lmc(i)) ];
+end
+
+info.score_map  = score_map;
+info.cnt_map    = cnt_map;
+info.row_sample = row_sample;
+info.col_sample = col_sample;
+info.scale_map  = scale_map;
+info.hists_map  = hists_map;
+info.pools_map  = pools_map;
+
+

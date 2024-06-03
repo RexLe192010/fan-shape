@@ -1,0 +1,19 @@
+
+function sc_map = im_sc(bw)
+	
+	edgelist = imlink(bw);
+	sc_map0 = cell(size(bw,1), size(bw,2) );
+	
+	for n = 1:length(edgelist)
+		pnts = edgelist{n};
+		for k = 1:size(pnts, 1)
+			pnt = pnts(k, :);
+			hist = sc_hist(pnt, pnts);
+			sc_map{pnt(1), pnt(2)} = [hist(:)+0]';
+		end
+    end
+    
+    ind = find( bw(:) > 0 );
+    ref = zeros( size(ed) );
+    ref(ind) = 1:length(ind);
+    siftmap.ref = ref;

@@ -1,0 +1,16 @@
+function show_res(results, img)
+
+figure('Resize','off','Position',[100 100 size(img,1) size(img,2)],...
+       'PaperUnit','points','PaperPosition',[0 0 size(img,1) size(img,2)]);
+axes('position',[0 0 1 1]);
+imshow(img); hold on;
+for n = 1:length(results)
+    
+   res = results(n);
+    
+   all_cntr = [];
+   all_skel = [];
+   for n =  1 : length(res.tplt)
+       all_cntr = [all_cntr; res.cntr{n} ];
+   end
+end

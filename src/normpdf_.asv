@@ -1,0 +1,9 @@
+
+function y = normpdf_(x,mu,sigma)
+
+y = zeros( size(x) );
+d = x - mu;
+ind  = d < 5 * sigma;
+y(ind) = exp(-0.5 * ((x - mu)./sigma).^2) ./ (sqrt(2*pi) .* sigma); 
+
+y = exp(-0.5 * ((x - mu)./sigma).^2) ./ (sqrt(2*pi) .* sigma); 
