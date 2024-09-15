@@ -28,7 +28,7 @@ para.ori = 1;
 
 im = imread('testing_images\three.jpg');
 ed = imread('testing_images\three_edges.tif');
-ed = im2bw(ed, 0.02);
+ed = imbinarize(ed, 0.02);
 
 edgelist = edgelink(ed, 10);
 ed = zeros( size(ed) );
@@ -40,11 +40,11 @@ dirmap = im_dir(ed, edgelist, model.dir_patchsize);
 
 tic
 fprintf('%s detecting.\n', cls);
-[det, info] = inference(im, ed, dirmap, para, model);     
+[det, info] = inference(im, ed, dirmap, para, model);
 toc
 
 pic = im;
-[y x c] = size(pic); 
+[y x c] = size(pic);
 figure('Units','Pixels','Resize','on',...
     'Position',[100 100 x y],'PaperUnit','points',...
     'PaperPosition',[0 0 x y]);
