@@ -59,3 +59,5 @@ for i = 1:length(det)
     % plot( det(i).contour([1:end,1],2), det(i).contour([1:end,1],1), '-', 'color', clr );
     text( det(i).center(2), det(i).center(1), num2str(det(i).score,2), 'BackgroundColor',[.7 .9 .7] );
 end
+
+waitfor(gcf); % Wait for figure to close
