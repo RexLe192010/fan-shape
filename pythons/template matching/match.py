@@ -6,7 +6,7 @@ import math
 fan_template = cv2.imread('./imgs/fan.bmp', cv2.IMREAD_GRAYSCALE)
 
 # read the image
-img = cv2.imread('./imgs/edges.png')
+img = cv2.imread('./imgs/edgesYel.png')
 img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 # resize the template to match the size of the image
