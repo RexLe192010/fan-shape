@@ -1,3 +1,5 @@
+# Information about fan-shape model and paper
+
 learning fan shape model and object detection using fan shape model.
 
 please run "train_gir.m" and "detect_gir.m" respectively.
