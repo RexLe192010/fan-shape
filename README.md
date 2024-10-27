@@ -10,3 +10,12 @@ If you have any question, please contact the author Xinggang Wang by email: wxgh
 
 Please cite the paper:
 Xinggang Wang, Xiang Bai, Tianyang Ma, Wenyu Liu, Longin Latecki. Fan Shape Model for Object Detection. IEEE Computer Society Conference on Computer vision and Pattern Recognition (CVPR), 2012.
+
+
+# Echocardiogram and masking
+
+## Purpose
+Generate masks for echocardiograms.
+
+## Brute force marking
+Explicitly locate the center, radius, and angle of the fan shapes.
