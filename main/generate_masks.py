@@ -35,6 +35,11 @@ def genMasks2019(): # generate masks for video data from 2019
 
 def genMasks2018(): # generate masks for video data from 2020
     filename = 'training_images/fan/screenshot0.png'
+    img = cv2.imread(filename)
+    height, width = img.shape[:2]
+    print(height, width)
+
+    
 
 def main():
     genMasks2019()
