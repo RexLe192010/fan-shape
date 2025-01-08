@@ -39,10 +39,28 @@ def genMasks2018(): # generate masks for video data from 2020
     height, width = img.shape[:2]
     print(height, width)
 
+    mask = np.zeros((height, width), np.uint8)
+    cv2.imshow('Mask', mask)
+    cv2.waitKey(0)
+
+    center = (318, 48)
+
+    radius = 430
+    start_angle = 45
+    end_angle = 90 + 45
+
+    cv2.ellipse(mask, center, (radius, radius), 0, start_angle, end_angle, 255, -1)
+
+    mask[:51, :] = 0
+
+    for i in range(1, 51):
+        cv2.imwrite(f'training_images/fan/{i}.bmp', mask)
+
     
 
 def main():
     genMasks2019()
+    genMasks2018()
 
 if __name__ == '__main__':
     main()

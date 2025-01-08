@@ -15,7 +15,7 @@ def genScreenshot(frame_num, filename): # the filename is the path to the video
             break
 
         height, width = frame.shape[:2]
-        # print(height, width)
+        print(height, width)
 
         cv.imwrite(f'../training_images/fan/{frame_num}.jpg', frame)
 
