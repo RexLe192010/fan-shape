@@ -6,8 +6,9 @@ def convertAngle(angle):
     return angle * 180 / math.pi
 
 def genMasks2019(): # generate masks for video data from 2019
-    filename = 'training_images/fan/screenshot0.png'
+    filename = '../training_images/fan/1.jpg'
     img = cv2.imread(filename)
+    print(img)
     height, width = img.shape[:2]
     print(height, width)
 
@@ -28,20 +29,20 @@ def genMasks2019(): # generate masks for video data from 2019
     mask2[:62, :] = 0
 
     for i in range(1, 62):
-        cv2.imwrite(f'training_images/fan/{i}.bmp', mask1)
+        cv2.imwrite(f'../training_images/fan/{i}.bmp', mask1)
 
     for i in range(62, 124):
-        cv2.imwrite(f'training_images/fan/{i}.bmp', mask2)
+        cv2.imwrite(f'../training_images/fan/{i}.bmp', mask2)
 
 def genMasks2018(): # generate masks for video data from 2020
-    filename = 'training_images/fan/screenshot0.png'
+    filename = '../training_images/fan/124.jpg'
     img = cv2.imread(filename)
     height, width = img.shape[:2]
     print(height, width)
 
     mask = np.zeros((height, width), np.uint8)
-    cv2.imshow('Mask', mask)
-    cv2.waitKey(0)
+    # cv2.imshow('Mask', mask)
+    # cv2.waitKey(0)
 
     center = (318, 48)
 
@@ -53,8 +54,8 @@ def genMasks2018(): # generate masks for video data from 2020
 
     mask[:51, :] = 0
 
-    for i in range(1, 51):
-        cv2.imwrite(f'training_images/fan/{i}.bmp', mask)
+    for i in range(124, 191):
+        cv2.imwrite(f'../training_images/fan/{i}.bmp', mask)
 
     
 
