@@ -1,12 +1,14 @@
 function train_fan
 
-addpath('include\CircStat2010e\');
-addpath('include\common_innerdist\');
-addpath('include\dsift\');
-addpath('include\libsvm-mat-3.0-1\');
-addpath('include\utils\');
-addpath('include\edge_linking\');
-addpath('src\');
+% this training file is in my main directory,
+% so we need "../" to go to the include directory
+addpath('../include\CircStat2010e\');
+addpath('../include\common_innerdist\');
+addpath('../include\dsift\');
+addpath('../include\libsvm-mat-3.0-1\');
+addpath('../include\utils\');
+addpath('../include\edge_linking\');
+addpath('../src\');
 
 nick = 'fan';
 show_figure = 0;
@@ -20,8 +22,8 @@ search_step	= 1;
 thre		= .75;
 lamda = 1.2;
 
-img_fld = ['training_images\fan\', nick, '\'];
-model_name = ['data\model_', nick];
+img_fld = ['../training_images\', nick, '\'];
+model_name = ['../data\model_', nick];
 imgs = dir([img_fld, '*.bmp']);
 
 theta = zeros( length(imgs), n_contsamp );
@@ -32,7 +34,7 @@ localsc = cell( 1, n_contsamp );
 cntrdes( length(imgs) ) = struct( 'd', [], 'a', [] );
 
 %  get the first model
-center1 = load(['training_images/fan/', nick, '/center1.txt']);
+center1 = load(['../training_images/', nick, '/center1.txt']);
 
 for n = 1:length(imgs)
     fprintf('Matching %d of %d\n', n, length(imgs));
