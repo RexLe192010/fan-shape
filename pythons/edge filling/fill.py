@@ -13,16 +13,16 @@ contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPL
 
 mask = np.zeros_like(img)
 
-# 假设我们只处理第一个轮廓
+# suppose the fan shape is a circle
 for cnt in contours:
-    # 获取轮廓的最小外接圆
+    # get the center and radius of the circle
     (x, y), radius = cv2.minEnclosingCircle(cnt)
     center = (int(x), int(y))
 
-    # 获取轮廓的角度
+    # get the angle of the fan shape
     angle = np.arctan2(cnt[0][0][1] - center[1], cnt[0][0][0] - center[0]) * 180 / np.pi
 
-    # 画出完整的扇形区域
+    # draw the fan shape on the mask
     cv2.ellipse(mask, center, (int(radius), int(radius)), 0, angle, angle + convertAngle(2 * math.asin(11.7 / 16.5)), 255, -1)
 
 # save the mask
