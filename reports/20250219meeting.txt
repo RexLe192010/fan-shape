@@ -26,4 +26,4 @@ Get more support and connections. Finish curernt task as soon as possible and st
 
 5. Other
 
-Last meeting, talked about generative AI resource. Gemini api series may be considered (some of them are free but not sure if they're SOTA or not).
+Last meeting, talked about generative AI resource. Gemini api series may be considered (some of them are free but not sure if they're newly realesed model or not).
