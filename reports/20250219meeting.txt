@@ -1,0 +1,29 @@
+1. Current Progress
+
+Generated training data from 2018 and 2019 videos;
+Tried rewriting the original train_gir.m file to adapt to train_fan.m;
+
+
+2. Concerns
+
+There're some features in train_gir that I'm not able to find in train_fan, such as center1 coordinates;
+Not very sure about the effect of the model;
+Current training data may not be effective.
+
+
+3. Other experiments
+
+As told by the professor, I've learned basics of openCV and tried using multiple tools from the library.
+Canny edge detection + Hough Trnasformation are used, but the result depended on the quality of the videos.
+
+
+4. Future work
+
+If the format of the videos in a year is consistent, then we don't actually need a model. We can use manual labelling instead by measuring the coordinates.
+Which way is more promising? New methods, such as other machine/deep learning models?
+Get more support and connections. Finish curernt task as soon as possible and start on a new one.
+
+
+5. Other
+
+Last meeting, talked about generative AI resource. Gemini api series may be considered (some of them are free but not sure if they're SOTA or not).
